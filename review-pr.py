@@ -35,7 +35,7 @@ jobs:
         with:
           header: chatgpt-review
           message: |
-            🧠 **ChatGPT Review Bot**:
+             **ChatGPT Review Bot**:
             ```
             $(python review-pr.py < pr.diff)
             ```
