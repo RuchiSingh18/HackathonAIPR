@@ -1,41 +1,31 @@
-name: ChatGPTPRReview
+# review-pr.py
+import os
+import openai
+import sys
+import requests
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+# Get OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# Get diff input
+diff = sys.stdin.read()
 
-      - name: Get PR diff
-        id: diff
-        run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
-          git diff origin/${{ github.event.pull_request.base.ref }} > pr.diff
+# Call ChatGPT
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are a senior software engineer helping with code review. Provide feedback on the pull request diff provided."
+        },
+        {
+            "role": "user",
+            "content": f"Here is the diff:\n\n{diff}"
+        }
+    ],
+    temperature=0.3,
+    max_tokens=1000
+)
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.*
-
-      - name: Install OpenAI Python SDK
-        run: pip install openai
-
-      - name: Run review with ChatGPT
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python review-pr.py < pr.diff
-
-      - name: Comment on PR
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: chatgpt-review
-          message: |
-             **ChatGPT Review Bot**:
-            ```
-            $(python review-pr.py < pr.diff)
-            ```
+review = response.choices[0].message["content"]
+print(review)
