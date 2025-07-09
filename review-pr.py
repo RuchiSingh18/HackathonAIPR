@@ -1,4 +1,4 @@
-name: ChatGPT PR Review
+name: ChatGPTPRReview
 
 on:
   pull_request:
