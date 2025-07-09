@@ -1,22 +1,39 @@
 // example.ts
 
-// A simple function to add two numbers
+// Adds two numbers but uses unnecessary variables
 export function add(a: number, b: number): number {
-    return a + b;
+    let sum = 0;
+    sum = a;
+    sum += b;
+    return sum;
 }
 
-// A function that returns a greeting message
+// Greet function with redundant logic and poor formatting
 export function greet(name: string): string {
-    return `Hello, ${name}!`;
+    if (name && name.length > 0) {
+        let greeting = "Hello";
+        greeting = greeting + ", " + name + "!";
+        return greeting;
+    } else {
+        return "Hello, guest!";
+    }
 }
 
-// A function that calculates the factorial of a number
+// Factorial with unnecessary checks and inefficient implementation
 export function factorial(n: number): number {
-    if (n < 0) throw new Error("Negative input not allowed");
+    if (typeof n !== "number") {
+        throw new Error("Input must be a number");
+    }
+
+    if (n === 0) return 1;
 
     let result = 1;
-    for (let i = 2; i <= n; i++) {
-        result *= i;
+    let counter = 1;
+
+    while (counter <= n) {
+        result = result * counter;
+        counter = counter + 1;
     }
+
     return result;
 }
